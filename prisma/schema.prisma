@@ -11,12 +11,17 @@ datasource db {
 model User {
   id            String    @id
   username      String    @unique
+  displayName   String
   email         String    @unique
-  password_hash String
+  password_hash String?
   github_id     Int?      @unique
+  avatarUrl     String?
+  bio           String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
+
+  @@map("users")
 }
 
 model Session {
@@ -24,4 +29,6 @@ model Session {
   userId    String
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@map("sessions")
 }

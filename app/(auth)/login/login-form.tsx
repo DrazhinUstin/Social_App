@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from '@/app/components/ui/form';
 import { Input } from '@/app/components/ui/input';
+import { InputPassword } from '@/app/components/input-password';
 
 export default function LoginForm() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -31,7 +32,6 @@ export default function LoginForm() {
   });
 
   function onSubmit(values: z.infer<typeof LoginFormSchema>) {
-    console.log(values);
     setErrorMsg(null);
     startTransition(async () => {
       const { error } = await login(values);
@@ -67,7 +67,7 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type='password' {...field} />
+                <InputPassword {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

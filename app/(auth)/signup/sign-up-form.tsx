@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from '@/app/components/ui/form';
 import { Input } from '@/app/components/ui/input';
+import { InputPassword } from '@/app/components/input-password';
 
 export default function SignUpForm() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -32,7 +33,6 @@ export default function SignUpForm() {
   });
 
   function onSubmit(values: z.infer<typeof SignUpFormSchema>) {
-    console.log(values);
     setErrorMsg(null);
     startTransition(async () => {
       const { error } = await signUp(values);
@@ -81,7 +81,7 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type='password' {...field} />
+                <InputPassword {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
