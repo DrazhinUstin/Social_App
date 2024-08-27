@@ -69,11 +69,7 @@ export async function login(values: z.infer<typeof LoginFormSchema>): Promise<{ 
 export async function logout(): Promise<{ error: string }> {
   'use server';
   const { session } = await validateRequest();
-  if (!session) {
-    return {
-      error: 'Unauthorized',
-    };
-  }
+  if (!session) throw Error('Unauthorized');
   await lucia.invalidateSession(session.id);
   const sessionCookie = lucia.createBlankSessionCookie();
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);

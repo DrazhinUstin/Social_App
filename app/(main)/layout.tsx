@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { validateRequest } from '@/auth';
 import SessionProvider from './session-provider';
+import Navbar from './_navbar';
 
 export default async function layout({ children }: { children: React.ReactNode }) {
   const session = await validateRequest();
@@ -9,7 +10,10 @@ export default async function layout({ children }: { children: React.ReactNode }
   }
   return (
     <div>
-      <SessionProvider value={session}>{children}</SessionProvider>
+      <SessionProvider value={session}>
+        <Navbar />
+        {children}
+      </SessionProvider>
     </div>
   );
 }
