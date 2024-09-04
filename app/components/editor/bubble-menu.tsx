@@ -9,6 +9,7 @@ export default function BubbleMenu({ editor }: { editor: Editor }) {
       className='flex rounded-lg border bg-card p-1 shadow-md'
     >
       <Button
+        type='button'
         variant='ghost'
         size='sm'
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -17,6 +18,7 @@ export default function BubbleMenu({ editor }: { editor: Editor }) {
         Bold
       </Button>
       <Button
+        type='button'
         variant='ghost'
         size='sm'
         onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -25,6 +27,7 @@ export default function BubbleMenu({ editor }: { editor: Editor }) {
         Italic
       </Button>
       <Button
+        type='button'
         variant='ghost'
         size='sm'
         onClick={() => editor.chain().focus().toggleStrike().run()}
