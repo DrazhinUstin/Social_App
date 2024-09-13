@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { inter } from '@/app/lib/fonts';
 import { ThemeProvider } from 'next-themes';
+import ReactQueryProvider from './react-query-provider';
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +26,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ReactQueryProvider>{children}</ReactQueryProvider>
         </ThemeProvider>
       </body>
     </html>
