@@ -3,6 +3,7 @@ import './globals.css';
 import { inter } from '@/app/lib/fonts';
 import { ThemeProvider } from 'next-themes';
 import ReactQueryProvider from './react-query-provider';
+import { Toaster } from '@/app/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: {
@@ -27,6 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ReactQueryProvider>{children}</ReactQueryProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
