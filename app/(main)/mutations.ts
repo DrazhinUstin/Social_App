@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-query';
 import { useToast } from '@/app/hooks/use-toast';
 import { type PostsWithNextCursor } from '@/app/lib/types';
-import { createPost } from '@/app/(main)/actions';
+import { createPost, deletePost } from '@/app/(main)/actions';
 
 export const useCreatePostMutation = () => {
   const queryClient = useQueryClient();
@@ -46,6 +46,42 @@ export const useCreatePostMutation = () => {
       toast({
         variant: 'destructive',
         title: 'Oops! Failed to create a post!',
+        description: error.message,
+      });
+    },
+  });
+
+  return mutation;
+};
+
+export const useDeletePostMutation = () => {
+  const queryClient = useQueryClient();
+
+  const { toast } = useToast();
+
+  const mutation = useMutation({
+    mutationFn: deletePost,
+    onSuccess: async (deletedPost) => {
+      const queryFilters: QueryFilters = { queryKey: ['posts', 'by-user'] };
+      await queryClient.cancelQueries(queryFilters);
+      queryClient.setQueriesData<
+        InfiniteData<PostsWithNextCursor, PostsWithNextCursor['nextCursor']>
+      >(queryFilters, (oldData) => {
+        if (!oldData) return;
+        return {
+          pages: oldData.pages.map(({ posts, nextCursor }) => ({
+            posts: posts.filter((post) => post.id !== deletedPost.id),
+            nextCursor,
+          })),
+          pageParams: oldData.pageParams,
+        };
+      });
+      toast({ title: 'Your post was successfully deleted!' });
+    },
+    onError: (error) => {
+      toast({
+        variant: 'destructive',
+        title: 'Oops! Failed to delete a post!',
         description: error.message,
       });
     },
