@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { validateRequest } from '@/auth';
 import { prisma } from '@/client';
 import UserAvatar from '@/app/components/user-avatar';
-import { Button } from '@/app/components/ui/button';
+import FollowButton from '@/app/components/follow-button';
 import { Loader2 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -20,7 +20,7 @@ async function WhoToFollow() {
   const { user } = await validateRequest();
   if (!user) return null;
   const users = await prisma.user.findMany({
-    where: { id: { not: user.id } },
+    where: { id: { not: user.id }, followedBy: { none: { followedById: user.id } } },
     take: 5,
     select: { id: true, username: true, displayName: true, avatarUrl: true },
   });
@@ -38,7 +38,7 @@ async function WhoToFollow() {
             </h4>
             <p className='line-clamp-1 break-all text-sm text-muted-foreground'>@{username}</p>
           </div>
-          <Button size='sm'>Follow</Button>
+          <FollowButton userId={id} />
         </article>
       ))}
     </div>

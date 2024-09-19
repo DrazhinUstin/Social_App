@@ -19,3 +19,8 @@ export type PostsWithNextCursor = {
   posts: PostData[];
   nextCursor: Post['id'] | null;
 };
+
+export type FollowInfo = {
+  isFollowedByUser: boolean;
+  followedByCount: number;
+};
