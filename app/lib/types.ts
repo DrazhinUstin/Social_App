@@ -1,18 +1,24 @@
 import { Prisma, Post } from '@prisma/client';
 
-export const userSelect = {
-  id: true,
-  username: true,
-  displayName: true,
-  avatarUrl: true,
-} satisfies Prisma.UserSelect;
+export const getUserSelect = (loggedInUserId: string) => {
+  return {
+    id: true,
+    username: true,
+    displayName: true,
+    avatarUrl: true,
+    followedBy: { where: { followedById: loggedInUserId } },
+    _count: { select: { followedBy: true } },
+  } satisfies Prisma.UserSelect;
+};
 
-export const postInclude = {
-  author: { select: userSelect },
-} satisfies Prisma.PostInclude;
+export const getPostInclude = (loggedInUserId: string) => {
+  return {
+    author: { select: getUserSelect(loggedInUserId) },
+  } satisfies Prisma.PostInclude;
+};
 
 export type PostData = Prisma.PostGetPayload<{
-  include: typeof postInclude;
+  include: ReturnType<typeof getPostInclude>;
 }>;
 
 export type PostsWithNextCursor = {

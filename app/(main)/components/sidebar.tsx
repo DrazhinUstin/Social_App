@@ -5,6 +5,7 @@ import { prisma } from '@/client';
 import UserAvatar from '@/app/components/user-avatar';
 import FollowButton from '@/app/components/follow-button';
 import { Loader2 } from 'lucide-react';
+import { getUserSelect } from '@/app/lib/types';
 
 export default function Sidebar() {
   return (
@@ -22,12 +23,12 @@ async function WhoToFollow() {
   const users = await prisma.user.findMany({
     where: { id: { not: user.id }, followedBy: { none: { followedById: user.id } } },
     take: 5,
-    select: { id: true, username: true, displayName: true, avatarUrl: true },
+    select: getUserSelect(user.id),
   });
   return (
     <div className='space-y-2 rounded-lg border bg-card p-2 shadow-md'>
       <h2 className='text-center text-xl font-semibold'>Who to follow</h2>
-      {users.map(({ id, username, displayName, avatarUrl }) => (
+      {users.map(({ id, username, displayName, avatarUrl, followedBy, _count }) => (
         <article key={id} className='grid grid-cols-[auto_1fr_auto] items-center gap-2'>
           <Link href={`users/${username}`}>
             <UserAvatar src={avatarUrl} />
@@ -38,7 +39,10 @@ async function WhoToFollow() {
             </h4>
             <p className='line-clamp-1 break-all text-sm text-muted-foreground'>@{username}</p>
           </div>
-          <FollowButton userId={id} />
+          <FollowButton
+            userId={id}
+            initialData={{ isFollowedByUser: !!followedBy[0], followedByCount: _count.followedBy }}
+          />
         </article>
       ))}
     </div>

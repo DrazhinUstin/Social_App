@@ -6,7 +6,13 @@ import type { FollowInfo } from '@/app/lib/types';
 import { Button } from '@/app/components/ui/button';
 import { useToast } from '@/app/hooks/use-toast';
 
-export default function FollowButton({ userId }: { userId: string }) {
+export default function FollowButton({
+  userId,
+  initialData,
+}: {
+  userId: string;
+  initialData: FollowInfo;
+}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const queryKey: QueryKey = ['users', userId, 'follow-info'];
@@ -15,11 +21,12 @@ export default function FollowButton({ userId }: { userId: string }) {
     queryKey,
     queryFn: () => api(`/api/users/${userId}/follows`).json<FollowInfo>(),
     staleTime: Infinity,
+    initialData,
   });
 
   const mutation = useMutation({
     mutationFn: () =>
-      data?.isFollowedByUser
+      data.isFollowedByUser
         ? api.delete(`/api/users/${userId}/follows`)
         : api.post(`/api/users/${userId}/follows`),
     onMutate: async () => {
@@ -48,11 +55,11 @@ export default function FollowButton({ userId }: { userId: string }) {
   return (
     <Button
       size='sm'
-      variant={data?.isFollowedByUser ? 'outline' : 'default'}
+      variant={data.isFollowedByUser ? 'outline' : 'default'}
       disabled={isPending || mutation.isPending}
       onClick={() => mutation.mutate()}
     >
-      {data?.isFollowedByUser ? 'Unfollow' : 'Follow'}
+      {data.isFollowedByUser ? 'Unfollow' : 'Follow'}
     </Button>
   );
 }

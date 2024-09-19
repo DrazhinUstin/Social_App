@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { validateRequest } from '@/auth';
 import { prisma } from '@/client';
-import { postInclude, type PostsWithNextCursor } from '@/app/lib/types';
+import { getPostInclude, type PostsWithNextCursor } from '@/app/lib/types';
 
 const postsPerPage = 10;
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       cursor: cursor ? { id: cursor } : undefined,
       take: postsPerPage,
       skip: cursor ? 1 : undefined,
-      include: postInclude,
+      include: getPostInclude(user.id),
     });
     const nextCursor = posts[postsPerPage - 1]?.id ?? null;
     const data: PostsWithNextCursor = { posts, nextCursor };
