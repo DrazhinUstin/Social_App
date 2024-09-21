@@ -1,6 +1,6 @@
 'use client';
 
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, type QueryKey } from '@tanstack/react-query';
 import { api } from '@/app/lib/api';
 import type { PostsWithNextCursor } from '@/app/lib/types';
 import PostCardSkeleton from '@/app/components/posts/post-card-skeleton';
@@ -8,12 +8,12 @@ import InfiniteScrollWrapper from '@/app/components/infinite-scroll-wrapper';
 import PostCard from '@/app/components/posts/post-card';
 import { Loader2 } from 'lucide-react';
 
-export default function Feed() {
+export default function Feed({ queryKey, url }: { queryKey: QueryKey; url: string }) {
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } =
     useInfiniteQuery({
-      queryKey: ['posts', 'by-user'],
+      queryKey,
       queryFn: async ({ pageParam }) =>
-        await api('/api/posts/by-user', {
+        await api(url, {
           searchParams: pageParam ? { cursor: pageParam } : undefined,
         }).json<PostsWithNextCursor>(),
       initialPageParam: null as PostsWithNextCursor['nextCursor'],
