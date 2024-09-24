@@ -13,12 +13,12 @@ export default function PostCard({ id, content, createdAt, author }: PostData) {
     <article className='space-y-4 rounded-lg border bg-card p-4 shadow-md'>
       <header className='grid grid-cols-[1fr_auto] items-center gap-2'>
         <div className='grid grid-cols-[auto_1fr] items-center gap-2'>
-          <Link href={`/users/${author.username}`}>
+          <Link href={`/users/${author.id}`}>
             <UserAvatar src={author.avatarUrl} />
           </Link>
           <div>
             <h4>
-              <Link className='font-medium hover:underline' href={`/users/${author.username}`}>
+              <Link className='font-medium hover:underline' href={`/users/${author.id}`}>
                 {author.displayName}
               </Link>
             </h4>

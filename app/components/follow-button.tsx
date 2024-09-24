@@ -1,10 +1,11 @@
 'use client';
 
-import { useQueryClient, useQuery, useMutation, type QueryKey } from '@tanstack/react-query';
+import { useQueryClient, useMutation, type QueryKey } from '@tanstack/react-query';
 import { api } from '@/app/lib/api';
 import type { FollowInfo } from '@/app/lib/types';
 import { Button } from '@/app/components/ui/button';
 import { useToast } from '@/app/hooks/use-toast';
+import { useFollowInfo } from '@/app/hooks/use-follow-info';
 
 export default function FollowButton({
   userId,
@@ -15,14 +16,9 @@ export default function FollowButton({
 }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const queryKey: QueryKey = ['users', userId, 'follow-info'];
+  const queryKey: QueryKey = ['follow-info', userId];
 
-  const { isPending, data } = useQuery({
-    queryKey,
-    queryFn: () => api(`/api/users/${userId}/follows`).json<FollowInfo>(),
-    staleTime: Infinity,
-    initialData,
-  });
+  const { isPending, data } = useFollowInfo(userId, initialData);
 
   const mutation = useMutation({
     mutationFn: () =>

@@ -30,12 +30,12 @@ async function WhoToFollow() {
       <h2 className='text-center text-xl font-semibold'>Who to follow</h2>
       {users.map(({ id, username, displayName, avatarUrl, followedBy, _count }) => (
         <article key={id} className='grid grid-cols-[auto_1fr_auto] items-center gap-2'>
-          <Link href={`users/${username}`}>
+          <Link href={`/users/${id}`}>
             <UserAvatar src={avatarUrl} />
           </Link>
           <div>
             <h4 className='line-clamp-1 break-all font-medium hover:underline'>
-              <Link href={`users/${username}`}>{displayName}</Link>
+              <Link href={`/users/${id}`}>{displayName}</Link>
             </h4>
             <p className='line-clamp-1 break-all text-sm text-muted-foreground'>@{username}</p>
           </div>

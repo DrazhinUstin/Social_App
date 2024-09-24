@@ -6,8 +6,10 @@ export const getUserSelect = (loggedInUserId: string) => {
     username: true,
     displayName: true,
     avatarUrl: true,
+    bio: true,
+    createdAt: true,
     followedBy: { where: { followedById: loggedInUserId } },
-    _count: { select: { followedBy: true } },
+    _count: { select: { followedBy: true, posts: true } },
   } satisfies Prisma.UserSelect;
 };
 
