@@ -18,7 +18,12 @@ export const useCreatePostMutation = () => {
   const mutation = useMutation({
     mutationFn: createPost,
     onSuccess: async (newPost) => {
-      const queryFilters: QueryFilters = { queryKey: ['posts', 'by-user'] };
+      const queryFilters = {
+        queryKey: ['posts'],
+        predicate: ({ queryKey }) =>
+          queryKey.includes('by-user') ||
+          (queryKey.includes('user-posts') && queryKey.includes(newPost.authorId)),
+      } satisfies QueryFilters;
       await queryClient.cancelQueries(queryFilters);
       queryClient.setQueriesData<
         InfiniteData<PostsWithNextCursor, PostsWithNextCursor['nextCursor']>
@@ -36,7 +41,7 @@ export const useCreatePostMutation = () => {
       });
       queryClient.invalidateQueries({
         queryKey: queryFilters.queryKey,
-        predicate: (query) => !query.state.data,
+        predicate: (query) => queryFilters.predicate(query) && !query.state.data,
       });
       toast({
         title: 'Your post was successfully created!',
@@ -62,7 +67,7 @@ export const useDeletePostMutation = () => {
   const mutation = useMutation({
     mutationFn: deletePost,
     onSuccess: async (deletedPost) => {
-      const queryFilters: QueryFilters = { queryKey: ['posts', 'by-user'] };
+      const queryFilters: QueryFilters = { queryKey: ['posts'] };
       await queryClient.cancelQueries(queryFilters);
       queryClient.setQueriesData<
         InfiniteData<PostsWithNextCursor, PostsWithNextCursor['nextCursor']>
