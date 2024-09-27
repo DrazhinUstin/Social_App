@@ -6,6 +6,8 @@ import Link from 'next/link';
 import UserAvatar from '@/app/components/user-avatar';
 import { formatDate } from '@/app/lib/utils';
 import PostCardMenu from './post-card-menu';
+import UserTooltip from '@/app/components/user-tooltip';
+import Linkify from '@/app/components/linkify';
 
 export default function PostCard({ id, content, createdAt, author }: PostData) {
   const { user } = useSession();
@@ -13,21 +15,27 @@ export default function PostCard({ id, content, createdAt, author }: PostData) {
     <article className='space-y-4 rounded-lg border bg-card p-4 shadow-md'>
       <header className='grid grid-cols-[1fr_auto] items-center gap-2'>
         <div className='grid grid-cols-[auto_1fr] items-center gap-2'>
-          <Link href={`/users/${author.id}`}>
-            <UserAvatar src={author.avatarUrl} />
-          </Link>
+          <UserTooltip user={author}>
+            <Link href={`/users/${author.id}`}>
+              <UserAvatar src={author.avatarUrl} />
+            </Link>
+          </UserTooltip>
           <div>
             <h4>
-              <Link className='font-medium hover:underline' href={`/users/${author.id}`}>
-                {author.displayName}
-              </Link>
+              <UserTooltip user={author}>
+                <Link className='font-medium hover:underline' href={`/users/${author.id}`}>
+                  {author.displayName}
+                </Link>
+              </UserTooltip>
             </h4>
             <p className='text-sm text-muted-foreground'>{formatDate(createdAt)}</p>
           </div>
         </div>
         {author.id === user.id && <PostCardMenu postId={id} />}
       </header>
-      <div className='space-y-2' dangerouslySetInnerHTML={{ __html: content }} />
+      <Linkify>
+        <div className='space-y-2' dangerouslySetInnerHTML={{ __html: content }} />
+      </Linkify>
     </article>
   );
 }
