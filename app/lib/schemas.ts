@@ -18,3 +18,8 @@ export const LoginFormSchema = z.object({
 export const CreatePostSchema = z.object({
   content: requiredString,
 });
+
+export const EditProfileSchema = z.object({
+  displayName: requiredString.max(100),
+  bio: z.string().max(1000).optional(),
+});

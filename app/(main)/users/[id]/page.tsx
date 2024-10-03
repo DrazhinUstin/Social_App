@@ -6,7 +6,7 @@ import type { FollowInfo } from '@/app/lib/types';
 import { formatDate } from '@/app/lib/utils';
 import UserAvatar from '@/app/components/user-avatar';
 import FollowCount from '@/app/components/follow-count';
-import { Button } from '@/app/components/ui/button';
+import EditProfileButton from './edit-profile-button';
 import FollowButton from '@/app/components/follow-button';
 import Feed from '@/app/components/posts/feed';
 import Sidebar from '@/app/(main)/components/sidebar';
@@ -52,7 +52,7 @@ export default async function Page({ params: { id } }: Props) {
               </li>
             </ul>
             {user.id === loggedInUser.id ? (
-              <Button>Edit profile</Button>
+              <EditProfileButton user={user} />
             ) : (
               <FollowButton userId={user.id} initialData={followInfo} />
             )}
