@@ -26,6 +26,11 @@ import { Input } from '@/app/components/ui/input';
 import { Textarea } from '@/app/components/ui/textarea';
 import { Button } from '@/app/components/ui/button';
 import { ButtonLoading } from '@/app/components/button-loading';
+import { useState, useRef } from 'react';
+import Image, { type ImageProps } from 'next/image';
+import default_avatar from '@/public/default_avatar.png';
+import { CameraIcon } from 'lucide-react';
+import CropImageDialog from '@/app/components/crop-image-dialog';
 
 export default function EditProfileDialog({
   isOpen,
@@ -36,6 +41,8 @@ export default function EditProfileDialog({
   close: () => void;
   user: UserData;
 }) {
+  const [avatarToUpload, setAvatarToUpload] = useState<Blob>();
+
   const form = useForm<z.infer<typeof EditProfileSchema>>({
     resolver: zodResolver(EditProfileSchema),
     defaultValues: {
@@ -63,6 +70,12 @@ export default function EditProfileDialog({
             Make changes to your profile here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
+        <AvatarSelect
+          avatarSrc={
+            avatarToUpload ? URL.createObjectURL(avatarToUpload) : user.avatarUrl || default_avatar
+          }
+          handleSelect={setAvatarToUpload}
+        />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
@@ -107,5 +120,60 @@ export default function EditProfileDialog({
         </Form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function AvatarSelect({
+  avatarSrc,
+  handleSelect,
+}: {
+  avatarSrc: ImageProps['src'];
+  handleSelect: (blob: Blob) => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageUrlToCrop, setImageUrlToCrop] = useState<string | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.[0];
+    setImageUrlToCrop(file ? URL.createObjectURL(file) : null);
+  };
+
+  return (
+    <>
+      <div className='relative'>
+        <Image
+          src={avatarSrc}
+          alt='avatar'
+          width={100}
+          height={100}
+          className='mx-auto block h-24 w-24 rounded-full object-cover'
+        />
+        <input
+          ref={fileInputRef}
+          type='file'
+          accept='image/*'
+          className='sr-only hidden'
+          onChange={handleChange}
+        />
+        <button
+          type='button'
+          onClick={() => fileInputRef.current?.click()}
+          className='absolute inset-0 m-auto grid size-10 place-items-center rounded-full bg-black text-white opacity-50 transition-opacity hover:opacity-75'
+        >
+          <CameraIcon />
+        </button>
+      </div>
+      {imageUrlToCrop && (
+        <CropImageDialog
+          imageUrl={imageUrlToCrop}
+          handleBlob={handleSelect}
+          closeDialog={() => {
+            setImageUrlToCrop(null);
+            URL.revokeObjectURL(imageUrlToCrop);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+          }}
+        />
+      )}
+    </>
   );
 }
