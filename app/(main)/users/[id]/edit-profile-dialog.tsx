@@ -54,7 +54,11 @@ export default function EditProfileDialog({
   const mutation = useEditProfileMutation();
 
   function onSubmit(values: z.infer<typeof EditProfileSchema>) {
-    mutation.mutate(values, { onSuccess: close });
+    let file: File | undefined;
+    if (avatarToUpload) {
+      file = new File([avatarToUpload], `${user.username}.webp`, { type: 'image/webp' });
+    }
+    mutation.mutate({ values, file }, { onSuccess: close });
   }
 
   const handleOpenChange = (open: boolean) => {

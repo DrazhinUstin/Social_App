@@ -37,7 +37,7 @@ export default async function Page({ params: { id } }: Props) {
       <div className='grid grid-cols-[1fr_auto] items-start gap-8'>
         <div className='space-y-8'>
           <div className='space-y-2 rounded-lg border bg-card p-4 text-center shadow-md'>
-            <UserAvatar src={user.avatarUrl} width={150} height={150} className='m-auto' />
+            <UserAvatar src={user.avatarUrl} width={150} height={150} className='m-auto size-36' />
             <div>
               <h2 className='text-2xl font-bold'>{user.displayName}</h2>
               <p className='text-muted-foreground'>@{user.username}</p>

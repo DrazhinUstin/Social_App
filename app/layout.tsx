@@ -4,6 +4,9 @@ import { inter } from '@/app/lib/fonts';
 import { ThemeProvider } from 'next-themes';
 import ReactQueryProvider from './react-query-provider';
 import { Toaster } from '@/app/components/ui/toaster';
+import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin';
+import { extractRouterConfig } from 'uploadthing/server';
+import { ourFileRouter } from '@/app/api/uploadthing/core';
 
 export const metadata: Metadata = {
   title: {
@@ -21,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang='en' className={inter.className}>
       <body>
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <ThemeProvider
           attribute='class'
           defaultTheme='system'

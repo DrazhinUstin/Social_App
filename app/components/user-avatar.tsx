@@ -15,7 +15,7 @@ export default function UserAvatar({
       alt='user avatar'
       width={width ?? 40}
       height={height ?? 40}
-      className={cn('block flex-none rounded-full object-cover', className)}
+      className={cn('block size-10 flex-none rounded-full object-cover', className)}
       {...rest}
     />
   );
