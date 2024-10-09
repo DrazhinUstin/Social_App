@@ -16,6 +16,7 @@ export const getUserSelect = (loggedInUserId: string) => {
 export const getPostInclude = (loggedInUserId: string) => {
   return {
     author: { select: getUserSelect(loggedInUserId) },
+    attachments: true,
   } satisfies Prisma.PostInclude;
 };
 

@@ -17,6 +17,7 @@ export const LoginFormSchema = z.object({
 
 export const CreatePostSchema = z.object({
   content: requiredString,
+  attachmentIds: z.array(z.string()).max(5),
 });
 
 export const EditProfileSchema = z.object({

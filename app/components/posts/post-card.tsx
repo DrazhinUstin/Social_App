@@ -8,8 +8,9 @@ import { formatDate } from '@/app/lib/utils';
 import PostCardMenu from './post-card-menu';
 import UserTooltip from '@/app/components/user-tooltip';
 import Linkify from '@/app/components/linkify';
+import Image from 'next/image';
 
-export default function PostCard({ id, content, createdAt, author }: PostData) {
+export default function PostCard({ id, content, createdAt, author, attachments }: PostData) {
   const { user } = useSession();
   return (
     <article className='space-y-4 rounded-lg border bg-card p-4 shadow-md'>
@@ -36,6 +37,25 @@ export default function PostCard({ id, content, createdAt, author }: PostData) {
       <Linkify>
         <div className='space-y-2' dangerouslySetInnerHTML={{ __html: content }} />
       </Linkify>
+      <div className='flex flex-wrap items-center justify-center gap-3'>
+        {attachments.map(({ id, mediaType, url }) => {
+          return (
+            <div key={id}>
+              {mediaType === 'Image' ? (
+                <Image
+                  src={url}
+                  alt='post image'
+                  width={500}
+                  height={500}
+                  className='block w-full max-w-80'
+                />
+              ) : (
+                <video src={url} className='block w-full max-w-80' controls />
+              )}
+            </div>
+          );
+        })}
+      </div>
     </article>
   );
 }

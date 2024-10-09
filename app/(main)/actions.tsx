@@ -2,16 +2,21 @@
 
 import { validateRequest } from '@/auth';
 import { prisma } from '@/client';
+import { z } from 'zod';
 import { CreatePostSchema } from '@/app/lib/schemas';
 import { getPostInclude } from '@/app/lib/types';
 
-export async function createPost(input: string) {
+export async function createPost(data: z.infer<typeof CreatePostSchema>) {
   const { user } = await validateRequest();
   if (!user) throw Error('Not authorized!');
-  const { content } = CreatePostSchema.parse({ content: input });
+  const { content, attachmentIds } = CreatePostSchema.parse(data);
   try {
     const post = await prisma.post.create({
-      data: { content, authorId: user.id },
+      data: {
+        content,
+        authorId: user.id,
+        attachments: { connect: attachmentIds.map((id) => ({ id })) },
+      },
       include: getPostInclude(user.id),
     });
     return post;

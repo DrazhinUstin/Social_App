@@ -24,6 +24,24 @@ export const ourFileRouter = {
         data: { avatarUrl },
       });
     }),
+  postAttachment: f({
+    image: { maxFileSize: '4MB', maxFileCount: 4 },
+    video: { maxFileSize: '256MB', maxFileCount: 1 },
+  })
+    .middleware(async ({ req }) => {
+      const { user } = await validateRequest();
+      if (!user) throw new UploadThingError('Unauthorized');
+      return { loggedInUser: user };
+    })
+    .onUploadComplete(async ({ file }) => {
+      const media = await prisma.media.create({
+        data: {
+          url: file.url.replace('/f/', `/a/${process.env.NEXT_PUBLIC_APP_ID}/`),
+          mediaType: file.type.startsWith('image') ? 'Image' : 'Video',
+        },
+      });
+      return { id: media.id };
+    }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
