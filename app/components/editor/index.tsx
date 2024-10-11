@@ -10,9 +10,11 @@ import './styles.css';
 export default function Editor({
   initialContent,
   handleUpdate,
+  onPaste,
 }: {
   initialContent?: string;
   handleUpdate: (p: string) => void;
+  onPaste: (e: React.ClipboardEvent<HTMLDivElement>) => void;
 }) {
   const editor = useEditor({
     extensions: [
@@ -57,7 +59,7 @@ export default function Editor({
     <div>
       {editor && <BubbleMenu editor={editor} />}
       {editor && <FloatingMenu editor={editor} />}
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} onPaste={onPaste} />
     </div>
   );
 }

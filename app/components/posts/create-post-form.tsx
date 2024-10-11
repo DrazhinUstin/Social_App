@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { useCreatePostMutation } from '@/app/(main)/mutations';
 import { useAttachmentsUpload, type Attachment } from '@/app/hooks/use-attachments-upload';
+import { useDropzone } from '@uploadthing/react';
 import UserAvatar from '@/app/components/user-avatar';
 import Editor from '@/app/components/editor';
 import { ButtonLoading } from '@/app/components/button-loading';
@@ -16,6 +17,8 @@ export default function CreatePostForm() {
   const mutation = useCreatePostMutation();
   const { isUploading, startUpload, uploadProgress, attachments, removeAttachment, resetUpload } =
     useAttachmentsUpload();
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop: startUpload });
+  const { onClick, ...rootProps } = getRootProps();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +36,13 @@ export default function CreatePostForm() {
     <form onSubmit={handleSubmit} className='space-y-2 rounded-lg border bg-card p-4 shadow-md'>
       <div className='grid grid-cols-[auto_1fr] items-center gap-2'>
         <UserAvatar />
-        <Editor handleUpdate={setContent} />
+        <div {...rootProps} className={cn(isDragActive && 'outline-dotted outline-primary')}>
+          <Editor
+            handleUpdate={setContent}
+            onPaste={(e) => startUpload([...e.clipboardData.files])}
+          />
+          <input {...getInputProps()} />
+        </div>
       </div>
       <div className='flex items-center justify-end gap-2'>
         {isUploading && uploadProgress !== undefined && (
