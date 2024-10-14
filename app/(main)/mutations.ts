@@ -7,6 +7,7 @@ import {
   type QueryFilters,
 } from '@tanstack/react-query';
 import { useToast } from '@/app/hooks/use-toast';
+import { usePathname, useRouter } from 'next/navigation';
 import { type PostsWithNextCursor } from '@/app/lib/types';
 import { createPost, deletePost } from '@/app/(main)/actions';
 
@@ -64,6 +65,10 @@ export const useDeletePostMutation = () => {
 
   const { toast } = useToast();
 
+  const pathname = usePathname();
+
+  const router = useRouter();
+
   const mutation = useMutation({
     mutationFn: deletePost,
     onSuccess: async (deletedPost) => {
@@ -82,6 +87,9 @@ export const useDeletePostMutation = () => {
         };
       });
       toast({ title: 'Your post was successfully deleted!' });
+      if (pathname === `/posts/${deletedPost.id}`) {
+        router.replace(`/users/${deletedPost.author.id}`);
+      }
     },
     onError: (error) => {
       toast({

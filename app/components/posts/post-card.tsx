@@ -29,7 +29,11 @@ export default function PostCard({ id, content, createdAt, author, attachments }
                 </Link>
               </UserTooltip>
             </h4>
-            <p className='text-sm text-muted-foreground'>{formatDate(createdAt)}</p>
+            <p className='text-sm text-muted-foreground'>
+              <Link className='hover:underline' href={`/posts/${id}`}>
+                {formatDate(createdAt)}
+              </Link>
+            </p>
           </div>
         </div>
         {author.id === user.id && <PostCardMenu postId={id} />}
