@@ -9,8 +9,17 @@ import PostCardMenu from './post-card-menu';
 import UserTooltip from '@/app/components/user-tooltip';
 import Linkify from '@/app/components/linkify';
 import Image from 'next/image';
+import LikeButton from './like-button';
 
-export default function PostCard({ id, content, createdAt, author, attachments }: PostData) {
+export default function PostCard({
+  id,
+  content,
+  createdAt,
+  author,
+  attachments,
+  likes,
+  _count,
+}: PostData) {
   const { user } = useSession();
   return (
     <article className='space-y-4 rounded-lg border bg-card p-4 shadow-md'>
@@ -60,6 +69,13 @@ export default function PostCard({ id, content, createdAt, author, attachments }
           );
         })}
       </div>
+      <hr />
+      <footer>
+        <LikeButton
+          postId={id}
+          initialData={{ isLikedByUser: !!likes.length, likesCount: _count.likes }}
+        />
+      </footer>
     </article>
   );
 }

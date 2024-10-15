@@ -17,6 +17,8 @@ export const getPostInclude = (loggedInUserId: string) => {
   return {
     author: { select: getUserSelect(loggedInUserId) },
     attachments: true,
+    likes: { where: { userId: loggedInUserId } },
+    _count: { select: { likes: true } },
   } satisfies Prisma.PostInclude;
 };
 
@@ -36,4 +38,9 @@ export type PostsWithNextCursor = {
 export type FollowInfo = {
   isFollowedByUser: boolean;
   followedByCount: number;
+};
+
+export type LikesInfo = {
+  isLikedByUser: boolean;
+  likesCount: number;
 };
