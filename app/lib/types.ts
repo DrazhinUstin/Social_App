@@ -18,6 +18,7 @@ export const getPostInclude = (loggedInUserId: string) => {
     author: { select: getUserSelect(loggedInUserId) },
     attachments: true,
     likes: { where: { userId: loggedInUserId } },
+    bookmarks: { where: { userId: loggedInUserId } },
     _count: { select: { likes: true } },
   } satisfies Prisma.PostInclude;
 };
@@ -43,4 +44,8 @@ export type FollowInfo = {
 export type LikesInfo = {
   isLikedByUser: boolean;
   likesCount: number;
+};
+
+export type BookmarkInfo = {
+  isBookmarkedByUser: boolean;
 };

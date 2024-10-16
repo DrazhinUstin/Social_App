@@ -52,6 +52,8 @@ export default function LikeButton({
 
   return (
     <button
+      type='button'
+      title={data.isLikedByUser ? 'Unlike' : 'Like'}
       className={cn(
         'flex items-center gap-1 font-medium text-muted-foreground',
         data.isLikedByUser && 'text-primary',

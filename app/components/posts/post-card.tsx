@@ -10,6 +10,7 @@ import UserTooltip from '@/app/components/user-tooltip';
 import Linkify from '@/app/components/linkify';
 import Image from 'next/image';
 import LikeButton from './like-button';
+import BookmarkButton from './bookmark-button';
 
 export default function PostCard({
   id,
@@ -18,6 +19,7 @@ export default function PostCard({
   author,
   attachments,
   likes,
+  bookmarks,
   _count,
 }: PostData) {
   const { user } = useSession();
@@ -70,11 +72,12 @@ export default function PostCard({
         })}
       </div>
       <hr />
-      <footer>
+      <footer className='flex items-center justify-between gap-2'>
         <LikeButton
           postId={id}
           initialData={{ isLikedByUser: !!likes.length, likesCount: _count.likes }}
         />
+        <BookmarkButton postId={id} initialData={{ isBookmarkedByUser: !!bookmarks.length }} />
       </footer>
     </article>
   );

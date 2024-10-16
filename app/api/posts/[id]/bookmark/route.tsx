@@ -1,4 +1,4 @@
-import type { LikesInfo } from '@/app/lib/types';
+import type { BookmarkInfo } from '@/app/lib/types';
 import { validateRequest } from '@/auth';
 import { prisma } from '@/client';
 
@@ -10,16 +10,13 @@ export async function GET(request: Request, { params: { id } }: { params: { id: 
     }
     const post = await prisma.post.findUnique({
       where: { id },
-      select: { likes: { where: { userId: user.id } }, _count: { select: { likes: true } } },
+      select: { bookmarks: { where: { userId: user.id } } },
     });
     if (!post) {
       return new Response('Post not found!', { status: 404 });
     }
-    const likesInfo: LikesInfo = {
-      isLikedByUser: !!post.likes.length,
-      likesCount: post._count.likes,
-    };
-    return Response.json(likesInfo);
+    const bookmarkInfo: BookmarkInfo = { isBookmarkedByUser: !!post.bookmarks.length };
+    return Response.json(bookmarkInfo);
   } catch (error) {
     console.error(error);
     return new Response('Internal server error!', { status: 500 });
@@ -32,7 +29,7 @@ export async function POST(request: Request, { params: { id } }: { params: { id:
     if (!user) {
       return new Response('Unauthorized!', { status: 401 });
     }
-    await prisma.like.create({ data: { postId: id, userId: user.id } });
+    await prisma.bookmark.create({ data: { postId: id, userId: user.id } });
     return new Response();
   } catch (error) {
     console.error(error);
@@ -46,7 +43,7 @@ export async function DELETE(request: Request, { params: { id } }: { params: { i
     if (!user) {
       return new Response('Unauthorized!', { status: 401 });
     }
-    await prisma.like.delete({ where: { postId_userId: { postId: id, userId: user.id } } });
+    await prisma.bookmark.delete({ where: { postId_userId: { postId: id, userId: user.id } } });
     return new Response();
   } catch (error) {
     console.error(error);
