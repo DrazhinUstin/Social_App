@@ -19,8 +19,14 @@ export const getPostInclude = (loggedInUserId: string) => {
     attachments: true,
     likes: { where: { userId: loggedInUserId } },
     bookmarks: { where: { userId: loggedInUserId } },
-    _count: { select: { likes: true } },
+    _count: { select: { likes: true, comments: true } },
   } satisfies Prisma.PostInclude;
+};
+
+export const getCommentInclude = (loggedInUserId: string) => {
+  return {
+    user: { select: getUserSelect(loggedInUserId) },
+  } satisfies Prisma.CommentInclude;
 };
 
 export type UserData = Prisma.UserGetPayload<{
@@ -34,6 +40,15 @@ export type PostData = Prisma.PostGetPayload<{
 export type PostsWithNextCursor = {
   posts: PostData[];
   nextCursor: Post['id'] | null;
+};
+
+export type CommentData = Prisma.CommentGetPayload<{
+  include: ReturnType<typeof getCommentInclude>;
+}>;
+
+export type CommentsWithNextCursor = {
+  comments: CommentData[];
+  nextCursor: CommentData['id'] | null;
 };
 
 export type FollowInfo = {

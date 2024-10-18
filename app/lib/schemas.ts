@@ -24,3 +24,7 @@ export const EditProfileSchema = z.object({
   displayName: requiredString.max(100),
   bio: z.string().max(1000).optional(),
 });
+
+export const CreateCommentSchema = z.object({
+  content: requiredString.max(500),
+});

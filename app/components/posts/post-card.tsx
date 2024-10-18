@@ -2,6 +2,7 @@
 
 import type { PostData } from '@/app/lib/types';
 import { useSession } from '@/app/(main)/session-provider';
+import { useState } from 'react';
 import Link from 'next/link';
 import UserAvatar from '@/app/components/user-avatar';
 import { formatDate } from '@/app/lib/utils';
@@ -11,6 +12,8 @@ import Linkify from '@/app/components/linkify';
 import Image from 'next/image';
 import LikeButton from './like-button';
 import BookmarkButton from './bookmark-button';
+import { MessageCircleIcon } from 'lucide-react';
+import Comments from '@/app/components/comments';
 
 export default function PostCard({
   id,
@@ -23,6 +26,7 @@ export default function PostCard({
   _count,
 }: PostData) {
   const { user } = useSession();
+  const [openComments, setOpenComments] = useState<boolean>(false);
   return (
     <article className='space-y-4 rounded-lg border bg-card p-4 shadow-md'>
       <header className='grid grid-cols-[1fr_auto] items-center gap-2'>
@@ -73,12 +77,22 @@ export default function PostCard({
       </div>
       <hr />
       <footer className='flex items-center justify-between gap-2'>
-        <LikeButton
-          postId={id}
-          initialData={{ isLikedByUser: !!likes.length, likesCount: _count.likes }}
-        />
+        <div className='flex items-center gap-2'>
+          <LikeButton
+            postId={id}
+            initialData={{ isLikedByUser: !!likes.length, likesCount: _count.likes }}
+          />
+          <button
+            className='flex items-center gap-1 font-medium text-muted-foreground'
+            onClick={() => setOpenComments(!openComments)}
+          >
+            <MessageCircleIcon className='size-5' />
+            {_count.comments}
+          </button>
+        </div>
         <BookmarkButton postId={id} initialData={{ isBookmarkedByUser: !!bookmarks.length }} />
       </footer>
+      {openComments && <Comments postId={id} />}
     </article>
   );
 }

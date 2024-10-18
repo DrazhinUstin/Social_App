@@ -1,0 +1,40 @@
+'use server';
+
+import { CreateCommentSchema } from '@/app/lib/schemas';
+import { getCommentInclude } from '@/app/lib/types';
+import { validateRequest } from '@/auth';
+import { prisma } from '@/client';
+
+export async function createComment({ input, postId }: { input: string; postId: string }) {
+  const { content } = CreateCommentSchema.parse({ content: input });
+  const { user } = await validateRequest();
+  if (!user) throw Error('Unauthorized!');
+  try {
+    const comment = await prisma.comment.create({
+      data: { userId: user.id, postId, content },
+      include: getCommentInclude(user.id),
+    });
+    return comment;
+  } catch (error) {
+    console.error(error);
+    throw Error('Database error: Failed to create a comment!');
+  }
+}
+
+export async function deleteComment(commentId: string) {
+  const { user } = await validateRequest();
+  if (!user) throw Error('Unauthorized!');
+  const comment = await prisma.comment.findUnique({ where: { id: commentId } });
+  if (!comment) throw Error('Comment not found!');
+  if (user.id !== comment.userId) throw Error('Unauthorized!');
+  try {
+    const deletedComment = await prisma.comment.delete({
+      where: { id: commentId },
+      include: getCommentInclude(user.id),
+    });
+    return deletedComment;
+  } catch (error) {
+    console.error(error);
+    throw Error('Database error: Failed to delete a comment!');
+  }
+}

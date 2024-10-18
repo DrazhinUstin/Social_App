@@ -37,10 +37,10 @@ export default function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>
-          Logged in as <span className='text-primary'>{user.username}</span>
+          Logged in as <span className='text-primary'>@{user.username}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href={`/users/${user.username}`}>
+        <Link href={`/users/${user.id}`}>
           <DropdownMenuItem>
             <User className='mr-2 h-4 w-4' />
             <span>Profile</span>
