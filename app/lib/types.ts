@@ -29,6 +29,13 @@ export const getCommentInclude = (loggedInUserId: string) => {
   } satisfies Prisma.CommentInclude;
 };
 
+export const getNotificationInclude = (loggedInUserId: string) => {
+  return {
+    issuer: { select: getUserSelect(loggedInUserId) },
+    post: { select: { content: true } },
+  } satisfies Prisma.NotificationInclude;
+};
+
 export type UserData = Prisma.UserGetPayload<{
   select: ReturnType<typeof getUserSelect>;
 }>;
@@ -49,6 +56,15 @@ export type CommentData = Prisma.CommentGetPayload<{
 export type CommentsWithNextCursor = {
   comments: CommentData[];
   nextCursor: CommentData['id'] | null;
+};
+
+export type NotificationData = Prisma.NotificationGetPayload<{
+  include: ReturnType<typeof getNotificationInclude>;
+}>;
+
+export type NotificationsWithNextCursor = {
+  notifications: NotificationData[];
+  nextCursor: NotificationData['id'] | null;
 };
 
 export type FollowInfo = {

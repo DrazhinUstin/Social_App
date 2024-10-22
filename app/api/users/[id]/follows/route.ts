@@ -36,7 +36,12 @@ export async function POST(request: Request, { params }: { params: { id: string 
     if (!loggedInUser) {
       return new Response('Unauthorized!', { status: 401 });
     }
-    await prisma.follows.create({ data: { followingId: userId, followedById: loggedInUser.id } });
+    await prisma.$transaction([
+      prisma.follows.create({ data: { followingId: userId, followedById: loggedInUser.id } }),
+      prisma.notification.create({
+        data: { recipientId: userId, issuerId: loggedInUser.id, type: 'FOLLOW' },
+      }),
+    ]);
     return new Response();
   } catch (error) {
     return new Response('Internal server error!', { status: 500 });
@@ -50,9 +55,14 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     if (!loggedInUser) {
       return new Response('Unauthorized!', { status: 401 });
     }
-    await prisma.follows.delete({
-      where: { followingId_followedById: { followingId: userId, followedById: loggedInUser.id } },
-    });
+    await prisma.$transaction([
+      prisma.follows.delete({
+        where: { followingId_followedById: { followingId: userId, followedById: loggedInUser.id } },
+      }),
+      prisma.notification.deleteMany({
+        where: { recipientId: userId, issuerId: loggedInUser.id, type: 'FOLLOW' },
+      }),
+    ]);
     return new Response();
   } catch (error) {
     return new Response('Internal server error!', { status: 500 });

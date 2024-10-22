@@ -32,7 +32,20 @@ export async function POST(request: Request, { params: { id } }: { params: { id:
     if (!user) {
       return new Response('Unauthorized!', { status: 401 });
     }
-    await prisma.like.create({ data: { postId: id, userId: user.id } });
+    const post = await prisma.post.findUnique({ where: { id }, select: { authorId: true } });
+    if (!post) {
+      return new Response('Post not found!', { status: 404 });
+    }
+    await prisma.$transaction([
+      prisma.like.create({ data: { postId: id, userId: user.id } }),
+      ...(user.id !== post.authorId
+        ? [
+            prisma.notification.create({
+              data: { postId: id, issuerId: user.id, recipientId: post.authorId, type: 'LIKE' },
+            }),
+          ]
+        : []),
+    ]);
     return new Response();
   } catch (error) {
     console.error(error);
@@ -46,7 +59,10 @@ export async function DELETE(request: Request, { params: { id } }: { params: { i
     if (!user) {
       return new Response('Unauthorized!', { status: 401 });
     }
-    await prisma.like.delete({ where: { postId_userId: { postId: id, userId: user.id } } });
+    await prisma.$transaction([
+      prisma.like.delete({ where: { postId_userId: { postId: id, userId: user.id } } }),
+      prisma.notification.deleteMany({ where: { postId: id, issuerId: user.id, type: 'LIKE' } }),
+    ]);
     return new Response();
   } catch (error) {
     console.error(error);

@@ -9,11 +9,22 @@ export async function createComment({ input, postId }: { input: string; postId: 
   const { content } = CreateCommentSchema.parse({ content: input });
   const { user } = await validateRequest();
   if (!user) throw Error('Unauthorized!');
+  const post = await prisma.post.findUnique({ where: { id: postId }, select: { authorId: true } });
+  if (!post) throw Error('Post not found!');
   try {
-    const comment = await prisma.comment.create({
-      data: { userId: user.id, postId, content },
-      include: getCommentInclude(user.id),
-    });
+    const [comment] = await prisma.$transaction([
+      prisma.comment.create({
+        data: { userId: user.id, postId, content },
+        include: getCommentInclude(user.id),
+      }),
+      ...(user.id !== post.authorId
+        ? [
+            prisma.notification.create({
+              data: { issuerId: user.id, recipientId: post.authorId, postId, type: 'COMMENT' },
+            }),
+          ]
+        : []),
+    ]);
     return comment;
   } catch (error) {
     console.error(error);
