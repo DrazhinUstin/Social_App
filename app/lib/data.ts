@@ -27,3 +27,15 @@ export const getPostById = cache(async (postId: string, loggedInUserId: string) 
     throw Error('Database Error: Failed to fetch a post');
   }
 });
+
+export async function getUnreadNotificationsCount(userId: string) {
+  try {
+    const unreadCount = await prisma.notification.count({
+      where: { recipientId: userId, read: false },
+    });
+    return unreadCount;
+  } catch (error) {
+    console.error(error);
+    throw Error('Database Error: Failed to fetch unread notifications count');
+  }
+}

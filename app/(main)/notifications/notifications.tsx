@@ -3,6 +3,8 @@
 import { api } from '@/app/lib/api';
 import type { NotificationsWithNextCursor } from '@/app/lib/types';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useMarkNotificationsAsReadMutation } from './mutations';
+import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import InfiniteScrollWrapper from '@/app/components/infinite-scroll-wrapper';
 import PostCardSkeleton from '@/app/components/posts/post-card-skeleton';
@@ -20,6 +22,12 @@ export default function Notifications() {
       initialPageParam: null as NotificationsWithNextCursor['nextCursor'],
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     });
+
+  const { mutate } = useMarkNotificationsAsReadMutation();
+
+  useEffect(() => {
+    mutate();
+  }, []);
 
   if (status === 'pending') {
     return <PostCardSkeleton />;
