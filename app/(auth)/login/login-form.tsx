@@ -19,6 +19,7 @@ import {
 } from '@/app/components/ui/form';
 import { Input } from '@/app/components/ui/input';
 import { InputPassword } from '@/app/components/input-password';
+import GithubButton from './github-button';
 
 export default function LoginForm() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -76,6 +77,12 @@ export default function LoginForm() {
         <ButtonLoading type='submit' className='w-full' disabled={isPending}>
           Login
         </ButtonLoading>
+        <div className='flex items-center gap-2 text-sm'>
+          <div className='h-[1px] w-full bg-muted' />
+          OR
+          <div className='h-[1px] w-full bg-muted' />
+        </div>
+        <GithubButton />
         <p className='text-center'>
           Don't have an account?{' '}
           <Button variant='link' asChild>

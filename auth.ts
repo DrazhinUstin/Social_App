@@ -3,6 +3,7 @@ import { Lucia, type Session, type User } from 'lucia';
 import { prisma } from '@/client';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
+import { GitHub } from 'arctic';
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
@@ -40,6 +41,12 @@ interface DatabaseUserAttributes {
   avatarUrl: string | null;
   bio: string | null;
 }
+
+export const github = new GitHub(
+  process.env.GITHUB_CLIENT_ID!,
+  process.env.GITHUB_CLIENT_SECRET!,
+  `${process.env.NEXT_PUBLIC_APP_BASE_URL}/login/github/callback`,
+);
 
 export const validateRequest = cache(
   async (): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
