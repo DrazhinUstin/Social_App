@@ -20,6 +20,7 @@ import {
 import { Input } from '@/app/components/ui/input';
 import { InputPassword } from '@/app/components/input-password';
 import GithubButton from './github-button';
+import GoogleButton from './google-button';
 
 export default function LoginForm() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -83,6 +84,7 @@ export default function LoginForm() {
           <div className='h-[1px] w-full bg-muted' />
         </div>
         <GithubButton />
+        <GoogleButton />
         <p className='text-center'>
           Don't have an account?{' '}
           <Button variant='link' asChild>

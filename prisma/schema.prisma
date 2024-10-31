@@ -15,6 +15,7 @@ model User {
   email                 String?        @unique
   password_hash         String?
   github_id             Int?           @unique
+  google_id             String?        @unique
   avatarUrl             String?
   bio                   String?
   createdAt             DateTime       @default(now())
