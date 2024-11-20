@@ -1,3 +1,5 @@
+@import '~stream-chat-react/dist/css/v2/index.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -64,7 +66,37 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+html {
+  font-family: var(--font-inter);
+}
+
+.str-chat,
+.str-chat__theme-light {
+  --str-chat__font-family: var(--font-inter);
+  --str-chat__primary-color: theme(colors.primary.DEFAULT);
+  --str-chat__on-primary-color: theme(colors.primary.foreground);
+  --str-chat__background-color: theme(colors.background);
+  --str-chat__secondary-background-color: theme(colors.background);
+  --str-chat__primary-surface-color: theme(colors.primary.DEFAULT);
+  --str-chat__surface-color: theme(colors.input);
+  --str-chat__secondary-surface-color: theme(colors.accent.DEFAULT);
+  --str-chat__tertiary-surface-color: theme(colors.secondary.DEFAULT);
+  --str-chat__text-color: theme(colors.foreground);
+  --str-chat__text-low-emphasis-color: theme(colors.muted.foreground);
+  --str-chat__disabled-color: theme(colors.muted.DEFAULT);
+  --str-chat__on-disabled-color: theme(colors.muted.foreground);
+  --str-chat__danger-color: theme(colors.destructive.DEFAULT);
+  --str-chat__own-message-bubble-color: theme(colors.primary.foreground);
+  --str-chat__channel-list-border-inline-end: unset;
+  --str-chat__channel-preview-active-background-color: theme(colors.accent.DEFAULT);
+}
+
+.str-chat__edit-message-form-options {
+  column-gap: 1rem;
 }

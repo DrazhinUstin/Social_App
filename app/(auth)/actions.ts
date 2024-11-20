@@ -8,6 +8,7 @@ import { lucia, validateRequest } from '@/auth';
 import { generateIdFromEntropySize } from 'lucia';
 import { z } from 'zod';
 import { SignUpFormSchema, LoginFormSchema } from '@/app/lib/schemas';
+import { streamServerClient } from '@/app/lib/stream';
 
 export async function signUp(values: z.infer<typeof SignUpFormSchema>): Promise<{ error: string }> {
   const validatedFields = SignUpFormSchema.safeParse(values);
@@ -30,8 +31,11 @@ export async function signUp(values: z.infer<typeof SignUpFormSchema>): Promise<
   if (existingEmail) {
     return { error: 'Failed to sign up: Email already exist' };
   }
-  await prisma.user.create({
-    data: { id: userId, password_hash: passwordHash, username, displayName: username, email },
+  await prisma.$transaction(async (tx) => {
+    await prisma.user.create({
+      data: { id: userId, password_hash: passwordHash, username, displayName: username, email },
+    });
+    await streamServerClient.upsertUser({ id: userId, username, name: username });
   });
   const session = await lucia.createSession(userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);

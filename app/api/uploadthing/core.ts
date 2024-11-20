@@ -1,3 +1,4 @@
+import { streamServerClient } from '@/app/lib/stream';
 import { validateRequest } from '@/auth';
 import { prisma } from '@/client';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
@@ -19,10 +20,13 @@ export const ourFileRouter = {
         await utapi.deleteFiles(fileKey);
       }
       const avatarUrl = file.url.replace('/f/', `/a/${process.env.NEXT_PUBLIC_APP_ID}/`);
-      await prisma.user.update({
-        where: { id: loggedInUser.id },
-        data: { avatarUrl },
-      });
+      await Promise.all([
+        prisma.user.update({
+          where: { id: loggedInUser.id },
+          data: { avatarUrl },
+        }),
+        streamServerClient.partialUpdateUser({ id: loggedInUser.id, set: { image: avatarUrl } }),
+      ]);
     }),
   postAttachment: f({
     image: { maxFileSize: '4MB', maxFileCount: 4 },

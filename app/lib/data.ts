@@ -1,6 +1,7 @@
 import { prisma } from '@/client';
 import { cache } from 'react';
 import { getUserSelect, getPostInclude } from '@/app/lib/types';
+import { streamServerClient } from '@/app/lib/stream';
 
 export const getUserById = cache(async (userId: string, loggedInUserId: string) => {
   try {
@@ -37,5 +38,15 @@ export async function getUnreadNotificationsCount(userId: string) {
   } catch (error) {
     console.error(error);
     throw Error('Database Error: Failed to fetch unread notifications count');
+  }
+}
+
+export async function getUnreadMessagesCount(userId: string) {
+  try {
+    const data = await streamServerClient.getUnreadCount(userId);
+    return data.total_unread_count;
+  } catch (error) {
+    console.error(error);
+    throw Error('Database Error: Failed to fetch unread messages count');
   }
 }

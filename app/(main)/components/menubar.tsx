@@ -1,19 +1,22 @@
 import { Button } from '@/app/components/ui/button';
 import Link from 'next/link';
-import { Home, Mail, Bookmark } from 'lucide-react';
+import { Home, Bookmark } from 'lucide-react';
+import MessagesCounter from './messages-counter';
 import NotificationsCounter from './notifications-counter';
 import { validateRequest } from '@/auth';
-import { getUnreadNotificationsCount } from '@/app/lib/data';
+import { getUnreadMessagesCount, getUnreadNotificationsCount } from '@/app/lib/data';
 
 const links = [
   { name: 'Home', href: '/', icon: <Home className='h-4 w-4' /> },
-  { name: 'Messages', href: '/messages', icon: <Mail className='h-4 w-4' /> },
   { name: 'Bookmarks', href: '/bookmarks', icon: <Bookmark className='h-4 w-4' /> },
 ];
 
 export default async function Menubar() {
   const { user } = await validateRequest();
-  const count = await getUnreadNotificationsCount(user?.id as string);
+  const [unreadMessagesCount, unreadNotificationsCount] = await Promise.all([
+    getUnreadMessagesCount(user?.id as string),
+    getUnreadNotificationsCount(user?.id as string),
+  ]);
   return (
     <aside className='sticky bottom-8 z-50 rounded-lg border bg-card p-2 shadow-md sm:top-[calc(var(--navbar-height)+2rem)]'>
       <nav className='flex justify-around sm:flex-col'>
@@ -25,7 +28,8 @@ export default async function Menubar() {
             </Link>
           </Button>
         ))}
-        <NotificationsCounter initialUnreadCount={count} />
+        <MessagesCounter initialUnreadCount={unreadMessagesCount} />
+        <NotificationsCounter initialUnreadCount={unreadNotificationsCount} />
       </nav>
     </aside>
   );

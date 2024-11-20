@@ -15,7 +15,7 @@ export default async function layout({ children }: { children: React.ReactNode }
         <Navbar />
         <div className='mx-auto grid min-h-[calc(100vh-var(--navbar-height))] w-[90vw] max-w-7xl grid-rows-[1fr_auto] items-start gap-8 py-8 sm:grid-cols-[auto_1fr]'>
           <Menubar />
-          <div className='-order-1 sm:order-none'>{children}</div>
+          <div className='-order-1 h-full sm:order-none'>{children}</div>
         </div>
       </SessionProvider>
     </div>
