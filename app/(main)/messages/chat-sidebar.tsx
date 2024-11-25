@@ -8,11 +8,11 @@ import { Button } from '@/app/components/ui/button';
 import { MailPlusIcon, XIcon } from 'lucide-react';
 import { cn } from '@/app/lib/utils';
 import { useCallback, useState } from 'react';
-import NewChatDialog from './new-chat-dialog';
+import CreateChannelDialog from './create-channel-dialog';
 
 export default function ChatSidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { user } = useSession();
-  const [isNewChatDialogOpen, setIsNewChatDialogOpen] = useState<boolean>(false);
+  const [isCreateChannelDialogOpen, setIsCreateChannelDialogOpen] = useState<boolean>(false);
 
   const CustomChannelPreview = useCallback((props: ChannelPreviewUIComponentProps) => {
     const { channel, setActiveChannel } = props;
@@ -34,8 +34,8 @@ export default function ChatSidebar({ isOpen, onClose }: { isOpen: boolean; onCl
           <Button
             variant='ghost'
             size='icon'
-            title='start a new chat'
-            onClick={() => setIsNewChatDialogOpen(true)}
+            title='create a new channel'
+            onClick={() => setIsCreateChannelDialogOpen(true)}
           >
             <MailPlusIcon className='size-5' />
           </Button>
@@ -54,11 +54,11 @@ export default function ChatSidebar({ isOpen, onClose }: { isOpen: boolean; onCl
           Preview={CustomChannelPreview}
         />
       </aside>
-      {isNewChatDialogOpen && (
-        <NewChatDialog
-          onClose={() => setIsNewChatDialogOpen(false)}
-          onChatCreated={() => {
-            setIsNewChatDialogOpen(false);
+      {isCreateChannelDialogOpen && (
+        <CreateChannelDialog
+          onClose={() => setIsCreateChannelDialogOpen(false)}
+          onChannelCreated={() => {
+            setIsCreateChannelDialogOpen(false);
             onClose();
           }}
         />

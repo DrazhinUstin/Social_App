@@ -19,12 +19,12 @@ import { CheckIcon, Loader2, XIcon } from 'lucide-react';
 import UserAvatar from '@/app/components/user-avatar';
 import { useToast } from '@/app/hooks/use-toast';
 
-export default function NewChatDialog({
+export default function CreateChannelDialog({
   onClose,
-  onChatCreated,
+  onChannelCreated,
 }: {
   onClose: () => void;
-  onChatCreated: () => void;
+  onChannelCreated: () => void;
 }) {
   const { client, setActiveChannel } = useChatContext();
   const { user: loggedInUser } = useSession();
@@ -56,18 +56,21 @@ export default function NewChatDialog({
     mutationFn: async () => {
       const channel = client.channel('messaging', {
         members: [loggedInUser.id, ...selectedUsers.map((user) => user.id)],
-        name: loggedInUser.displayName + ', ' + selectedUsers.map((user) => user.name).join(', '),
+        name:
+          selectedUsers.length > 1
+            ? loggedInUser.displayName + ', ' + selectedUsers.map((user) => user.name).join(', ')
+            : selectedUsers[0].name,
       });
       await channel.create();
       setActiveChannel(channel);
     },
     onSuccess: () => {
-      onChatCreated();
+      onChannelCreated();
     },
     onError: (error) => {
       toast({
         variant: 'destructive',
-        title: 'Oops! Failed to create a chat.',
+        title: 'Oops! Failed to create a channel.',
         description: error.message,
       });
     },
@@ -77,7 +80,7 @@ export default function NewChatDialog({
     <Dialog open onOpenChange={(open) => !open && !mutation.isPending && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New chat</DialogTitle>
+          <DialogTitle>New channel</DialogTitle>
           <DialogDescription>Search users to start a chat with</DialogDescription>
         </DialogHeader>
         <div>
@@ -133,7 +136,7 @@ export default function NewChatDialog({
             onClick={() => mutation.mutate()}
             disabled={!selectedUsers.length || mutation.isPending}
           >
-            Create a chat
+            Create a channel
           </Button>
         </DialogFooter>
       </DialogContent>
