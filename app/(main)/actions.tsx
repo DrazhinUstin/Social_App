@@ -25,6 +25,42 @@ export async function createPost(data: z.infer<typeof CreatePostSchema>) {
   }
 }
 
+export async function editPost({
+  postId,
+  data,
+}: {
+  postId: string;
+  data: z.infer<typeof CreatePostSchema>;
+}) {
+  const { content, attachmentIds } = CreatePostSchema.parse(data);
+  const { user } = await validateRequest();
+  if (!user) throw Error('Not authorized!');
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    include: { attachments: true },
+  });
+  if (!post) throw Error('Post not found!');
+  try {
+    const disconnect = post.attachments
+      .filter((a) => !attachmentIds.some((id) => id === a.id))
+      .map((a) => ({ id: a.id }));
+    const editedPost = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        content,
+        attachments: {
+          connect: attachmentIds.map((id) => ({ id })),
+          disconnect,
+        },
+      },
+      include: getPostInclude(user.id),
+    });
+    return editedPost;
+  } catch (error) {
+    throw Error('DB Error: Failed to edit a post');
+  }
+}
+
 export async function deletePost(postId: string) {
   const { user } = await validateRequest();
   if (!user) throw Error('Not authorized!');

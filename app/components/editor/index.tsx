@@ -14,7 +14,7 @@ export default function Editor({
 }: {
   initialContent?: string;
   handleUpdate: (p: string) => void;
-  onPaste: (e: React.ClipboardEvent<HTMLDivElement>) => void;
+  onPaste?: (e: React.ClipboardEvent<HTMLDivElement>) => void;
 }) {
   const editor = useEditor({
     extensions: [

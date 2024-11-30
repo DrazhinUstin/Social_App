@@ -1,69 +1,91 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { useCreatePostMutation } from '@/app/(main)/mutations';
-import { useAttachmentsUpload, type Attachment } from '@/app/hooks/use-attachments-upload';
-import { useDropzone } from '@uploadthing/react';
-import UserAvatar from '@/app/components/user-avatar';
-import Editor from '@/app/components/editor';
-import { ButtonLoading } from '@/app/components/button-loading';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/app/components/ui/dialog';
 import { Button } from '@/app/components/ui/button';
+import type { PostData } from '@/app/lib/types';
+import { useRef, useState } from 'react';
+import Editor from '@/app/components/editor';
 import { Loader2, PaperclipIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/app/lib/utils';
+import { type Attachment, useAttachmentsUpload } from '@/app/hooks/use-attachments-upload';
+import { useDropzone } from '@uploadthing/react';
+import { useEditPostMutation } from '@/app/(main)/mutations';
 
-export default function CreatePostForm() {
-  const [content, setContent] = useState<string>('');
-  const mutation = useCreatePostMutation();
+export default function EditPostDialog({ close, post }: { close: () => void; post: PostData }) {
+  const [content, setContent] = useState<string>(post.content);
   const { isUploading, startUpload, uploadProgress, attachments, removeAttachment, resetUpload } =
-    useAttachmentsUpload();
+    useAttachmentsUpload(post.attachments.map((a) => ({ isUploaded: true, ...a })));
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop: startUpload });
   const { onClick, ...rootProps } = getRootProps();
+  const mutation = useEditPostMutation();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleEdit = () => {
     mutation.mutate(
-      { content, attachmentIds: attachments.map(({ id }) => id as string) },
+      {
+        postId: post.id,
+        data: { content, attachmentIds: attachments.map(({ id }) => id as string) },
+      },
       {
         onSuccess() {
           resetUpload();
+          close();
         },
       },
     );
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-2 rounded-lg border bg-card p-4 shadow-md'>
-      <div className='grid grid-cols-[auto_1fr] items-center gap-2'>
-        <UserAvatar />
+    <Dialog open onOpenChange={(open) => !mutation.isPending && !isUploading && !open && close()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit post</DialogTitle>
+          <DialogDescription>
+            Make changes to your post and then click edit button.
+          </DialogDescription>
+        </DialogHeader>
         <div {...rootProps} className={cn(isDragActive && 'outline-dotted outline-primary')}>
           <Editor
+            initialContent={content}
             handleUpdate={setContent}
             onPaste={(e) => startUpload([...e.clipboardData.files])}
           />
           <input {...getInputProps()} />
         </div>
-      </div>
-      <div className='flex items-center justify-end gap-2'>
-        {isUploading && uploadProgress !== undefined && (
-          <span className='flex items-center gap-1'>
-            {uploadProgress}%
-            <Loader2 className='animate-spin text-primary' />
-          </span>
+        {!!attachments.length && (
+          <PostAttachments
+            isUploading={isUploading}
+            attachments={attachments}
+            onRemoveClick={removeAttachment}
+          />
         )}
-        <AddAttachmentButton onFilesSelected={startUpload} />
-        <ButtonLoading type='submit' disabled={mutation.isPending || isUploading}>
-          Make a Post
-        </ButtonLoading>
-      </div>
-      {!!attachments.length && (
-        <PostAttachments
-          isUploading={isUploading}
-          attachments={attachments}
-          onRemoveClick={removeAttachment}
-        />
-      )}
-    </form>
+        <DialogFooter>
+          {isUploading && uploadProgress !== undefined && (
+            <span className='flex items-center gap-1'>
+              {uploadProgress}%
+              <Loader2 className='animate-spin text-primary' />
+            </span>
+          )}
+          <AddAttachmentButton onFilesSelected={startUpload} />
+          <Button onClick={handleEdit} disabled={mutation.isPending || isUploading}>
+            Edit
+          </Button>
+          <DialogClose asChild>
+            <Button variant='outline' disabled={mutation.isPending || isUploading}>
+              Close
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

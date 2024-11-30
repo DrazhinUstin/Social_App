@@ -43,7 +43,7 @@ export default function EditChannelDialog({ onClose }: { onClose: () => void }) 
         </DialogHeader>
         <div>
           <Label htmlFor='chatName' className='mb-2 block'>
-            channel name:
+            Channel name:
           </Label>
           <Input
             id='chatName'

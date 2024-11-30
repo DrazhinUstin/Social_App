@@ -9,7 +9,7 @@ import {
 import { useToast } from '@/app/hooks/use-toast';
 import { usePathname, useRouter } from 'next/navigation';
 import { type PostsWithNextCursor } from '@/app/lib/types';
-import { createPost, deletePost } from '@/app/(main)/actions';
+import { createPost, deletePost, editPost } from '@/app/(main)/actions';
 
 export const useCreatePostMutation = () => {
   const queryClient = useQueryClient();
@@ -52,6 +52,49 @@ export const useCreatePostMutation = () => {
       toast({
         variant: 'destructive',
         title: 'Oops! Failed to create a post!',
+        description: error.message,
+      });
+    },
+  });
+
+  return mutation;
+};
+
+export const useEditPostMutation = () => {
+  const queryClient = useQueryClient();
+
+  const { toast } = useToast();
+
+  const mutation = useMutation({
+    mutationFn: editPost,
+    onSuccess: async (editedPost) => {
+      const queryFilters = {
+        queryKey: ['posts'],
+        predicate: ({ queryKey }) =>
+          queryKey.includes('by-user') ||
+          (queryKey.includes('user-posts') && queryKey.includes(editedPost.authorId)),
+      } satisfies QueryFilters;
+      await queryClient.cancelQueries(queryFilters);
+      queryClient.setQueriesData<
+        InfiniteData<PostsWithNextCursor, PostsWithNextCursor['nextCursor']>
+      >(queryFilters, (oldData) => {
+        if (!oldData) return oldData;
+        return {
+          pages: oldData.pages.map((page) => ({
+            posts: page.posts.map((post) => (post.id === editedPost.id ? editedPost : post)),
+            nextCursor: page.nextCursor,
+          })),
+          pageParams: oldData.pageParams,
+        };
+      });
+      toast({
+        title: 'Your post was successfully edited!',
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: 'destructive',
+        title: 'Oops! Failed to edit a post!',
         description: error.message,
       });
     },

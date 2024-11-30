@@ -13,15 +13,7 @@ import {
 import { Button } from '@/app/components/ui/button';
 import { ButtonLoading } from '@/app/components/button-loading';
 
-export default function DeletePostDialog({
-  isOpen,
-  close,
-  postId,
-}: {
-  isOpen: boolean;
-  close: () => void;
-  postId: string;
-}) {
+export default function DeletePostDialog({ close, postId }: { close: () => void; postId: string }) {
   const mutation = useDeletePostMutation();
 
   const handleOpenChange = (open: boolean) => {
@@ -29,11 +21,11 @@ export default function DeletePostDialog({
   };
 
   const handleDelete = () => {
-    mutation.mutate(postId, { onSuccess: () => close() });
+    mutation.mutate(postId, { onSuccess: close });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete a post?</DialogTitle>

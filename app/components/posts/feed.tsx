@@ -38,7 +38,7 @@ export default function Feed({ queryKey, url }: { queryKey: QueryKey; url: strin
     <InfiniteScrollWrapper onEndReached={() => !isFetching && hasNextPage && fetchNextPage()}>
       <div className='space-y-8'>
         {posts.map((post) => (
-          <PostCard key={post.id} {...post} />
+          <PostCard key={post.id} post={post} />
         ))}
         {isFetchingNextPage && <Loader2 className='mx-auto animate-spin' />}
       </div>

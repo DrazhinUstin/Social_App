@@ -15,16 +15,8 @@ import BookmarkButton from './bookmark-button';
 import { MessageCircleIcon } from 'lucide-react';
 import Comments from '@/app/components/comments';
 
-export default function PostCard({
-  id,
-  content,
-  createdAt,
-  author,
-  attachments,
-  likes,
-  bookmarks,
-  _count,
-}: PostData) {
+export default function PostCard({ post }: { post: PostData }) {
+  const { id, content, createdAt, author, attachments, likes, bookmarks, _count } = post;
   const { user } = useSession();
   const [openComments, setOpenComments] = useState<boolean>(false);
   return (
@@ -51,7 +43,7 @@ export default function PostCard({
             </p>
           </div>
         </div>
-        {author.id === user.id && <PostCardMenu postId={id} />}
+        {author.id === user.id && <PostCardMenu post={post} />}
       </header>
       <Linkify>
         <div className='space-y-2' dangerouslySetInnerHTML={{ __html: content }} />

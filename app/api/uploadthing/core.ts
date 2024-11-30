@@ -44,7 +44,7 @@ export const ourFileRouter = {
           mediaType: file.type.startsWith('image') ? 'Image' : 'Video',
         },
       });
-      return { id: media.id };
+      return { id: media.id, url: media.url, mediaType: media.mediaType };
     }),
 } satisfies FileRouter;
 

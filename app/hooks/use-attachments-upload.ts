@@ -3,16 +3,29 @@
 import { useState } from 'react';
 import { useUploadThing } from '@/app/lib/uploadthing';
 import { useToast } from '@/app/hooks/use-toast';
+import type { MediaType } from '@prisma/client';
 
-export interface Attachment {
+interface UnUploadedAttachment {
+  isUploaded: false;
   file: File;
-  isUploaded: boolean;
-  dbEntryId?: string;
+  id?: undefined;
+  url?: undefined;
+  mediaType?: undefined;
 }
 
-export const useAttachmentsUpload = () => {
+interface UploadedAttachment {
+  isUploaded: true;
+  file?: undefined;
+  id: string;
+  url: string;
+  mediaType: MediaType;
+}
+
+export type Attachment = UnUploadedAttachment | UploadedAttachment;
+
+export const useAttachmentsUpload = (alreadyUploaded?: UploadedAttachment[]) => {
   const { toast } = useToast();
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [attachments, setAttachments] = useState<Attachment[]>(alreadyUploaded ?? []);
   const [uploadProgress, setUploadProgress] = useState<number>();
 
   const { isUploading, startUpload } = useUploadThing('postAttachment', {
@@ -24,7 +37,7 @@ export const useAttachmentsUpload = () => {
       });
       setAttachments((prev) => [
         ...prev,
-        ...mappedFiles.map((file) => ({ file, isUploaded: false })),
+        ...mappedFiles.map((file) => ({ file, isUploaded: false as const })),
       ]);
       return mappedFiles;
     },
@@ -32,9 +45,9 @@ export const useAttachmentsUpload = () => {
     onClientUploadComplete(data) {
       setAttachments((prev) =>
         prev.map((attachment) => {
-          const uploadResult = data.find((item) => item.name === attachment.file.name);
+          const uploadResult = data.find((item) => item.name === attachment.file?.name);
           if (uploadResult) {
-            return { ...attachment, isUploaded: true, dbEntryId: uploadResult.serverData.id };
+            return { isUploaded: true, ...uploadResult.serverData };
           }
           return attachment;
         }),
@@ -68,8 +81,8 @@ export const useAttachmentsUpload = () => {
     startUpload(files);
   }
 
-  function removeAttachment(fileName: string) {
-    setAttachments((prev) => prev.filter((attachment) => attachment.file.name !== fileName));
+  function removeAttachment(id: string) {
+    setAttachments((prev) => prev.filter((attachment) => attachment.id !== id));
   }
 
   function resetUpload() {

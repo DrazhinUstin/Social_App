@@ -6,17 +6,14 @@ import {
   DropdownMenuItem,
 } from '@/app/components/ui/dropdown-menu';
 import { Button } from '@/app/components/ui/button';
+import EditPostDialog from './edit-post-dialog';
 import DeletePostDialog from './delete-post-dialog';
-import { Ellipsis, Trash2 } from 'lucide-react';
+import { Ellipsis, Pencil, Trash2 } from 'lucide-react';
+import type { PostData } from '@/app/lib/types';
 
-export default function PostCardMenu({
-  className,
-  postId,
-}: {
-  className?: string;
-  postId: string;
-}) {
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+export default function PostCardMenu({ className, post }: { className?: string; post: PostData }) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   return (
     <>
       <div className={className}>
@@ -27,18 +24,21 @@ export default function PostCardMenu({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
+            <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+              <Pencil className='mr-2 size-4 text-primary' />
+              <span>Edit</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
               <Trash2 className='mr-2 size-4 text-destructive' />
               <span className='text-destructive'>Delete</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <DeletePostDialog
-        isOpen={isDialogOpen}
-        close={() => setIsDialogOpen(false)}
-        postId={postId}
-      />
+      {isEditDialogOpen && <EditPostDialog close={() => setIsEditDialogOpen(false)} post={post} />}
+      {isDeleteDialogOpen && (
+        <DeletePostDialog close={() => setIsDeleteDialogOpen(false)} postId={post.id} />
+      )}
     </>
   );
 }
