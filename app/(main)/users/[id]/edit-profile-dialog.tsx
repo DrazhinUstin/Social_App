@@ -116,7 +116,7 @@ export default function EditProfileDialog({
                   Close
                 </Button>
               </DialogClose>
-              <ButtonLoading type='submit' disabled={mutation.isPending}>
+              <ButtonLoading type='submit' isLoading={mutation.isPending}>
                 Save
               </ButtonLoading>
             </DialogFooter>

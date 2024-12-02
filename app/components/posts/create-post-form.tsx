@@ -29,6 +29,7 @@ export default function CreatePostForm() {
         onSuccess() {
           resetUpload();
           setResetEditorKey((prev) => prev + 1);
+          setContent('');
         },
       },
     );
@@ -55,7 +56,11 @@ export default function CreatePostForm() {
           </span>
         )}
         <AddAttachmentButton onFilesSelected={startUpload} />
-        <ButtonLoading type='submit' disabled={!content || mutation.isPending || isUploading}>
+        <ButtonLoading
+          type='submit'
+          disabled={!content || isUploading}
+          isLoading={mutation.isPending}
+        >
           Make a Post
         </ButtonLoading>
       </div>

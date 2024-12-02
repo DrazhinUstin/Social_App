@@ -87,7 +87,7 @@ export default function SignUpForm() {
             </FormItem>
           )}
         />
-        <ButtonLoading type='submit' className='w-full' disabled={isPending}>
+        <ButtonLoading type='submit' className='w-full' isLoading={isPending}>
           Sign Up
         </ButtonLoading>
         <p className='text-center'>

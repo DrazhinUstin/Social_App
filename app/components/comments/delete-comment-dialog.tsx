@@ -36,7 +36,11 @@ export default function DeleteCommentDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <ButtonLoading variant='destructive' onClick={handleDelete} disabled={mutation.isPending}>
+          <ButtonLoading
+            variant='destructive'
+            onClick={handleDelete}
+            isLoading={mutation.isPending}
+          >
             Delete
           </ButtonLoading>
           <DialogClose asChild>

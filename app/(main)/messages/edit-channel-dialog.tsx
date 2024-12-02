@@ -1,4 +1,5 @@
 import { Button } from '@/app/components/ui/button';
+import { ButtonLoading } from '@/app/components/button-loading';
 import {
   Dialog,
   DialogContent,
@@ -59,14 +60,13 @@ export default function EditChannelDialog({ onClose }: { onClose: () => void }) 
               Close
             </Button>
           </DialogClose>
-          <Button
+          <ButtonLoading
             onClick={() => mutation.mutate()}
-            disabled={
-              !channelName.trim() || channel?.data?.name === channelName || mutation.isPending
-            }
+            disabled={!channelName.trim() || channel?.data?.name === channelName}
+            isLoading={mutation.isPending}
           >
             Edit
-          </Button>
+          </ButtonLoading>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from '@/app/components/ui/dialog';
 import { Button } from '@/app/components/ui/button';
+import { ButtonLoading } from '@/app/components/button-loading';
 import type { PostData } from '@/app/lib/types';
 import { useRef, useState } from 'react';
 import Editor from '@/app/components/editor';
@@ -75,9 +76,13 @@ export default function EditPostDialog({ close, post }: { close: () => void; pos
             </span>
           )}
           <AddAttachmentButton onFilesSelected={startUpload} />
-          <Button onClick={handleEdit} disabled={!content || mutation.isPending || isUploading}>
+          <ButtonLoading
+            onClick={handleEdit}
+            disabled={!content || isUploading}
+            isLoading={mutation.isPending}
+          >
             Edit
-          </Button>
+          </ButtonLoading>
           <DialogClose asChild>
             <Button variant='outline' disabled={mutation.isPending || isUploading}>
               Close

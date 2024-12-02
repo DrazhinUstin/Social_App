@@ -38,7 +38,7 @@ export default async function Page({ params: { id } }: Props) {
 
   return (
     <main className='grid items-start gap-8 lg:grid-cols-[1fr_auto]'>
-      <PostCard {...post} />
+      <PostCard post={post} />
       <aside className='sticky top-[calc(var(--navbar-height)_+_2rem)] hidden w-60 lg:block'>
         <AuthorInfo author={post.author} loggedInUser={loggedInUser} />
       </aside>

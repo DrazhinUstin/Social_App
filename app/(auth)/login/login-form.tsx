@@ -75,7 +75,7 @@ export default function LoginForm() {
             </FormItem>
           )}
         />
-        <ButtonLoading type='submit' className='w-full' disabled={isPending}>
+        <ButtonLoading type='submit' className='w-full' isLoading={isPending}>
           Login
         </ButtonLoading>
         <div className='flex items-center gap-2 text-sm'>

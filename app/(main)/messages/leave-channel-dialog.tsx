@@ -59,7 +59,7 @@ export default function LeaveChannelDialog({
           <ButtonLoading
             variant='destructive'
             onClick={() => mutation.mutate()}
-            disabled={mutation.isPending}
+            isLoading={mutation.isPending}
           >
             Leave
           </ButtonLoading>

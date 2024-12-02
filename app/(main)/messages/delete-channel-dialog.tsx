@@ -56,7 +56,7 @@ export default function DeleteChannelDialog({
           <ButtonLoading
             variant='destructive'
             onClick={() => mutation.mutate()}
-            disabled={mutation.isPending}
+            isLoading={mutation.isPending}
           >
             Delete
           </ButtonLoading>

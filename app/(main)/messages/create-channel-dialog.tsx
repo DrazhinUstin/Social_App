@@ -1,4 +1,5 @@
 import { Button } from '@/app/components/ui/button';
+import { ButtonLoading } from '@/app/components/button-loading';
 import {
   Dialog,
   DialogContent,
@@ -132,12 +133,13 @@ export default function CreateChannelDialog({
               Close
             </Button>
           </DialogClose>
-          <Button
+          <ButtonLoading
             onClick={() => mutation.mutate()}
-            disabled={!selectedUsers.length || mutation.isPending}
+            disabled={!selectedUsers.length}
+            isLoading={mutation.isPending}
           >
             Create a channel
-          </Button>
+          </ButtonLoading>
         </DialogFooter>
       </DialogContent>
     </Dialog>
