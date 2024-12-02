@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { cn } from '@/app/lib/utils';
 
 export default function CreatePostForm() {
+  const [resetEditorKey, setResetEditorKey] = useState<number>(0);
   const [content, setContent] = useState<string>('');
   const mutation = useCreatePostMutation();
   const { isUploading, startUpload, uploadProgress, attachments, removeAttachment, resetUpload } =
@@ -27,6 +28,7 @@ export default function CreatePostForm() {
       {
         onSuccess() {
           resetUpload();
+          setResetEditorKey((prev) => prev + 1);
         },
       },
     );
@@ -38,8 +40,9 @@ export default function CreatePostForm() {
         <UserAvatar />
         <div {...rootProps} className={cn(isDragActive && 'outline-dotted outline-primary')}>
           <Editor
+            key={resetEditorKey}
             handleUpdate={setContent}
-            onPaste={(e) => startUpload([...e.clipboardData.files])}
+            onPaste={(e) => e.clipboardData.files.length && startUpload([...e.clipboardData.files])}
           />
           <input {...getInputProps()} />
         </div>
@@ -52,7 +55,7 @@ export default function CreatePostForm() {
           </span>
         )}
         <AddAttachmentButton onFilesSelected={startUpload} />
-        <ButtonLoading type='submit' disabled={mutation.isPending || isUploading}>
+        <ButtonLoading type='submit' disabled={!content || mutation.isPending || isUploading}>
           Make a Post
         </ButtonLoading>
       </div>

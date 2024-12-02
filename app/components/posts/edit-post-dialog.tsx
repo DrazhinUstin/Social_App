@@ -56,7 +56,7 @@ export default function EditPostDialog({ close, post }: { close: () => void; pos
           <Editor
             initialContent={content}
             handleUpdate={setContent}
-            onPaste={(e) => startUpload([...e.clipboardData.files])}
+            onPaste={(e) => e.clipboardData.files.length && startUpload([...e.clipboardData.files])}
           />
           <input {...getInputProps()} />
         </div>
@@ -75,7 +75,7 @@ export default function EditPostDialog({ close, post }: { close: () => void; pos
             </span>
           )}
           <AddAttachmentButton onFilesSelected={startUpload} />
-          <Button onClick={handleEdit} disabled={mutation.isPending || isUploading}>
+          <Button onClick={handleEdit} disabled={!content || mutation.isPending || isUploading}>
             Edit
           </Button>
           <DialogClose asChild>

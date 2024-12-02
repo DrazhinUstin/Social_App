@@ -3,17 +3,21 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import CharacterCount from '@tiptap/extension-character-count';
 import BubbleMenu from './bubble-menu';
 import FloatingMenu from './floating-menu';
+import CharactersCounter from './characters-counter';
 import './styles.css';
 
 export default function Editor({
   initialContent,
   handleUpdate,
+  charactersLimit = 500,
   onPaste,
 }: {
   initialContent?: string;
   handleUpdate: (p: string) => void;
+  charactersLimit?: number;
   onPaste?: (e: React.ClipboardEvent<HTMLDivElement>) => void;
 }) {
   const editor = useEditor({
@@ -40,6 +44,9 @@ export default function Editor({
       Placeholder.configure({
         placeholder: "What's new?",
       }),
+      CharacterCount.configure({
+        limit: charactersLimit,
+      }),
     ],
     editorProps: {
       attributes: {
@@ -49,17 +56,17 @@ export default function Editor({
     },
     content: initialContent,
     onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      handleUpdate(html);
+      handleUpdate(editor.isEmpty ? '' : editor.getHTML());
     },
     immediatelyRender: false,
   });
 
   return (
-    <div>
+    <div className='relative'>
       {editor && <BubbleMenu editor={editor} />}
       {editor && <FloatingMenu editor={editor} />}
       <EditorContent editor={editor} onPaste={onPaste} />
+      {editor && <CharactersCounter editor={editor} limit={charactersLimit} />}
     </div>
   );
 }

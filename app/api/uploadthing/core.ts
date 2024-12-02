@@ -7,7 +7,7 @@ import { UploadThingError, UTApi } from 'uploadthing/server';
 const f = createUploadthing();
 
 export const ourFileRouter = {
-  userAvatar: f({ image: { maxFileSize: '4MB' } })
+  userAvatar: f({ image: { maxFileSize: '4MB', maxFileCount: 1 } })
     .middleware(async ({ req }) => {
       const { user } = await validateRequest();
       if (!user) throw new UploadThingError('Unauthorized');

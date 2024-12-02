@@ -71,10 +71,19 @@ export const useAttachmentsUpload = (alreadyUploaded?: UploadedAttachment[]) => 
       });
       return;
     }
-    if (attachments.length + files.length > 5) {
+    if (attachments.length + files.length > 4) {
       toast({
         variant: 'destructive',
-        description: 'You can only upload up to 5 files!',
+        description: 'You can only upload up to 4 files per post!',
+      });
+      return;
+    }
+    const videos = attachments.filter((a) => a.mediaType === 'Video');
+    const videoFiles = files.filter((file) => file.type.startsWith('video'));
+    if (videos.length + videoFiles.length > 1) {
+      toast({
+        variant: 'destructive',
+        description: 'You can only upload 1 video per post!',
       });
       return;
     }
