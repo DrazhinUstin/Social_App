@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className='grid h-screen place-items-center'>
+    <main className='grid min-h-screen place-items-center'>
       <SignUpForm />
     </main>
   );

@@ -44,7 +44,7 @@ export default function SignUpForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='w-[90vw] max-w-[40rem] space-y-2 rounded-lg border bg-card p-4 text-card-foreground shadow-md'
+        className='w-full max-w-[40rem] space-y-2 rounded-lg border bg-card p-4 text-card-foreground shadow-md'
       >
         <h2 className='text-center text-2xl font-semibold'>Sign Up</h2>
         {errorMsg && <p className='text-center text-sm text-destructive'>{errorMsg}</p>}

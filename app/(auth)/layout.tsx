@@ -6,5 +6,5 @@ export default async function Layout({ children }: { children: React.ReactNode }
   if (user) {
     return redirect('/');
   }
-  return <>{children}</>;
+  return <div className='mx-auto w-[90vw] max-w-7xl'>{children}</div>;
 }
