@@ -32,6 +32,26 @@ export async function createComment({ input, postId }: { input: string; postId: 
   }
 }
 
+export async function editComment({ input, commentId }: { input: string; commentId: string }) {
+  const { content } = CreateCommentSchema.parse({ content: input });
+  const { user } = await validateRequest();
+  if (!user) throw Error('Unauthorized!');
+  const comment = await prisma.comment.findUnique({ where: { id: commentId } });
+  if (!comment) throw Error('Comment not found!');
+  if (user.id !== comment.userId) throw Error('Unauthorized!');
+  try {
+    const editedComment = await prisma.comment.update({
+      where: { id: commentId },
+      data: { content },
+      include: getCommentInclude(user.id),
+    });
+    return editedComment;
+  } catch (error) {
+    console.error(error);
+    throw Error('Database error: Failed to edit a comment!');
+  }
+}
+
 export async function deleteComment(commentId: string) {
   const { user } = await validateRequest();
   if (!user) throw Error('Unauthorized!');

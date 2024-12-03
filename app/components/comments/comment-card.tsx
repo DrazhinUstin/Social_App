@@ -26,7 +26,7 @@ export default function CommentCard({ comment }: { comment: CommentData }) {
               </UserTooltip>{' '}
               <span className='text-sm text-muted-foreground'>{formatDate(comment.createdAt)}</span>
             </h4>
-            {loggedInUser.id === comment.userId && <CommentCardMenu commentId={comment.id} />}
+            {loggedInUser.id === comment.userId && <CommentCardMenu comment={comment} />}
           </header>
           <p>{comment.content}</p>
         </div>
